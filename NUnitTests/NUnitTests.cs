@@ -1,128 +1,135 @@
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using CPI.DirectoryServices;
+using Assert = NUnit.Framework.Assert;
 
 namespace CPI.DirectoryServices.Tests
 {
-	[TestFixture]
+
+    [TestFixture, TestClass]
 	public class BaseTests
 	{
-		[Test]
-		public void DCNaming()
+        [Test, TestMethod]
+        public void DCNaming()
 		{
 			DN dn = new DN(@"CN=Pete,OU=People,DC=example,DC=com");
 			
 			Assert.AreEqual(dn.ToString(), "CN=Pete,OU=People,DC=example,DC=com");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void NonDCNaming()
 		{
 			DN dn = new DN(@"CN=Pete,OU=People,O=Example Inc.,C=US");
 			
 			Assert.AreEqual(dn.ToString(), "CN=Pete,OU=People,O=Example Inc.,C=US");
 		}
-		
-		[Test]
-		public void ExtraSpaces()
+
+        [Test, TestMethod]
+        public void ExtraSpaces()
 		{
 			DN dn = new DN(@"    CN     =    Pete  , OU =  People,DC   =    example,DC = com");
 			
 			Assert.AreEqual(dn.ToString(), "CN=Pete,OU=People,DC=example,DC=com");
 		}
-		
-		[Test]
-		public void Semicolons()
+
+        [Test, TestMethod]
+        public void Semicolons()
 		{
 			DN dn = new DN(@"CN=Pete;OU=People,DC=example;DC=com");
 			
 			Assert.AreEqual(dn.ToString(), "CN=Pete,OU=People,DC=example,DC=com");
 		}
-		
-		[Test]
-		public void EmptyString()
+
+        [Test, TestMethod]
+        public void EmptyString()
 		{
 			DN dn = new DN("");
 			
 			Assert.AreEqual(dn.ToString(), "");
 		}
-		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
+
+        [Test, TestMethod]
+        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
 		public void AllSpaces()
 		{
 			DN dn = new DN("     ");
 		}
-				
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
+
+        [Test, TestMethod]
+        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
 		public void TypeBeginsWithNumber()
 		{
 			DN dn = new DN("3N=Pete");
 		}
-		
-		[Test]
-		public void BlankRDNValue()
+
+        [Test, TestMethod]
+        public void BlankRDNValue()
 		{
 			DN dn = new DN("CN=,OU=People,DC=example,DC=com");
 			
 			Assert.AreEqual(dn.ToString(), "CN=,OU=People,DC=example,DC=com");
 		}
-		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
+
+        [Test, TestMethod]
+        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
 		public void MalformedRDN()
 		{
 			DN dn = new DN("CN=Pete,People,DC=example,DC=com");
 		}
-		
-		[Test]
-		public void HexEncodedBinaryValueSingle()
+
+        [Test, TestMethod]
+        public void HexEncodedBinaryValueSingle()
 		{
 			DN dn = new DN("CN=#324312af34e4");
 			
 			Assert.AreEqual(dn.ToString(), "CN=#324312af34e4");
 		}
-		
-		[Test]
-		public void HexEncodedBinaryValueBeginning()
+
+        [Test, TestMethod]
+        public void HexEncodedBinaryValueBeginning()
 		{
 			DN dn = new DN("CN=#324312af34e4,OU=People,DC=example,DC=com");
 			
 			Assert.AreEqual(dn.ToString(), "CN=#324312af34e4,OU=People,DC=example,DC=com");
 		}
-		
-		[Test]
-		public void HexEncodedBinaryValueMiddle()
+
+        [Test, TestMethod]
+        public void HexEncodedBinaryValueMiddle()
 		{
 			DN dn = new DN("CN=Pete,OU=#324312af34e4,DC=example,DC=com");
 			
 			Assert.AreEqual(dn.ToString(), "CN=Pete,OU=#324312af34e4,DC=example,DC=com");
 		}
-		
-		[Test]
-		public void HexEncodedBinaryValueEnd()
+
+        [Test, TestMethod]
+        public void HexEncodedBinaryValueEnd()
 		{
 			DN dn = new DN("CN=Pete,OU=People,DC=example,DC=#324312af34e4");
 			
 			Assert.AreEqual(dn.ToString(), "CN=Pete,OU=People,DC=example,DC=#324312af34e4");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void InvalidCharsInHexEncodedBinaryValue()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void InvalidCharsInHexEncodedBinaryValue()
 		{
 			DN dn = new DN("CN=#34fer4,OU=People,DC=example,DC=com");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void InvalidHexEncodedBinaryValueLength()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void InvalidHexEncodedBinaryValueLength()
 		{
 			DN dn = new DN("CN=#35fe1,OU=People,DC=example,DC=com");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void MultvaluedRDN()
 		{
 			DN dn = new DN("CN=Pete + SN=Everett");
@@ -130,7 +137,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "CN=Pete+SN=Everett");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void GetChild()
 		{
 			DN baseDN = new DN("DC=example,DC=com");
@@ -141,12 +148,12 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(childDN, fullDN);
 		}
 	}
-	
-	
-	[TestFixture]
-	public class EqualityTests
+
+
+    [TestFixture, TestClass]
+    public class EqualityTests
 	{
-		[Test]
+		[Test, TestMethod]
 		public void RDNCount()
 		{
 			DN dn1 = new DN("");
@@ -162,7 +169,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn3.RDNs.Length, 4);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void RDNComponentCount()
 		{
 			DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
@@ -174,7 +181,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn2.RDNs[0].Components.Length, 2);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void EqualsMethod()
 		{
 			DN dn1 = new DN("Cn=PETE,oU=pEoPle,DC=exAMplE,Dc=cOM");
@@ -188,7 +195,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.IsFalse(dn1.Equals(dn3));
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void EqualsOperator()
 		{
 			DN dn1 = new DN("Cn=PETE,oU=pEoPle,DC=exAMplE,Dc=cOM");
@@ -202,7 +209,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.IsFalse(dn1 == dn3);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void NotEqualsOperator()
 		{
 			DN dn1 = new DN("Cn=PETE,oU=pEoPle ,   DC=exAMplE,Dc=cOM");
@@ -216,7 +223,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.IsTrue(dn1 != dn3);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void HashCode()
 		{
 			DN dn1 = new DN("Cn=PETE,oU=pEoPle,DC=exAMplE,Dc=cOM");
@@ -229,7 +236,7 @@ namespace CPI.DirectoryServices.Tests
 			
 			Assert.IsFalse(dn1.GetHashCode() == dn3.GetHashCode());
 		}
-		[Test]
+		[Test, TestMethod]
 		public void Parent()
 		{
 			DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
@@ -237,8 +244,9 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn1.Parent.ToString(), "OU=People,DC=example,DC=com");
 		}
 	
-		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(InvalidOperationException))]
+		[Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(InvalidOperationException))]
 		public void ParentOfEmptyString()
 		{
 			DN dn = new DN("CN=Pete,OU=People,DC=example,DC=com");
@@ -248,7 +256,7 @@ namespace CPI.DirectoryServices.Tests
 				dn = dn.Parent;
 			}
 		}
-		[Test]
+		[Test, TestMethod]
 		public void Contains()
 		{
 			DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
@@ -264,12 +272,12 @@ namespace CPI.DirectoryServices.Tests
 			Assert.IsFalse(dn2.Contains(dn3));
 		}
 	}
-	
-	
-	[TestFixture]
-	public class EscapingTests
+
+
+    [TestFixture, TestClass]
+    public class EscapingTests
 	{
-		[Test]
+		[Test, TestMethod]
 		public void SpacesAtBeginningAndEnd()
 		{
 			DN dn = new DN(@"CN=\     Pete    \ ", EscapeChars.SpecialChars);
@@ -281,7 +289,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"CN=     Pete     ");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void SpecialCharacters()
 		{
 			DN dn = new DN(@"CN=\#Pound\,Comma\=Equals Sign\+Plus sign\<Less than\>Greater than\;Semicolon\\Backslash\""Quote", EscapeChars.SpecialChars);
@@ -293,7 +301,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"CN=#Pound,Comma=Equals Sign+Plus sign<Less than>Greater than;Semicolon\Backslash""Quote");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void HexEscapeNonSpecialCharacter()
 		{
 			DN dn = new DN(@"CN=Pete\20Everett,OU=People,DC=example,DC=com");
@@ -301,14 +309,15 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"CN=Pete Everett,OU=People,DC=example,DC=com");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void UnescapedSpecialCharacter()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void UnescapedSpecialCharacter()
 		{
 			DN dn = new DN(@"CN=Winkin, Blinkin, and Nod,OU=People,DC=example,DC=com");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void MultibyteCharacter()
 		{
 			char MusicalNote  = (char)0x266B;
@@ -328,10 +337,10 @@ namespace CPI.DirectoryServices.Tests
 	}
 
 
-	[TestFixture]
-	public class OIDTests
+    [TestFixture, TestClass]
+    public class OIDTests
 	{
-		[Test]
+		[Test, TestMethod]
 		public void Single()
 		{
 			DN dn1 = new DN(@"OID.3.43.128=Pete");
@@ -342,7 +351,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn2,dn3);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void Beginning()
 		{
 			DN dn1 = new DN(@"OID.3.43.128=Pete,OU=People,DC=example,DC=com");
@@ -353,7 +362,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn2,dn3);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void Middle()
 		{
 			DN dn1 = new DN(@"CN=Pete,OID.3.43.128=Pete,OU=People,DC=example,DC=com");
@@ -364,7 +373,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn2,dn3);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void End()
 		{
 			DN dn1 = new DN(@"OU=People,DC=example,OID.3.43.128=com");
@@ -375,28 +384,31 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn2,dn3);
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void MixedCase()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void MixedCase()
 		{
 			DN dn = new DN("oId.3.23.1=Pete");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void LeadingZeroBeginning1()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void LeadingZeroBeginning1()
 		{
 			DN dn1 = new DN("03.23.1=Pete");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
 		public void LeadingZeroBeginning2()
 		{
 			DN dn = new DN("OID.03.23.1=Pete");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 			// This next one actually valid.  You're allowed to have a zero...just not a 
 			// non-zero number with a leading zero.
 		public void LeadingZeroBeginning3()
@@ -407,21 +419,23 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn1, dn2);
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void LeadingZeroMiddle1()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void LeadingZeroMiddle1()
 		{
 			DN dn = new DN("34.03.21=Pete");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void LeadingZeroMiddle2()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void LeadingZeroMiddle2()
 		{
 			DN dn = new DN("OID.34.03.21=Pete");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void LeadingZeroMiddle3()
 		{
 			DN dn1 = new DN("34.0.21=Pete");
@@ -430,21 +444,23 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn1, dn2);
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void LeadingZeroEnd1()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void LeadingZeroEnd1()
 		{
 			DN dn = new DN("32.21.05=Pete");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void LeadingZeroEnd2()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void LeadingZeroEnd2()
 		{
 			DN dn = new DN("OID.32.21.05=Pete");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void LeadingZeroEnd3()
 		{
 			DN dn1 = new DN("32.21.0=Pete");
@@ -453,7 +469,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn1, dn2);
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void Spaces()
 		{
 			DN dn1 = new DN("   32.21.0   =    Pete");
@@ -464,21 +480,23 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn2, dn3);
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TrailingPeriod()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void TrailingPeriod()
 		{
 			DN dn = new DN("OID.34.54.15.=Pete");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void AdjacentPeriods()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void AdjacentPeriods()
 		{
 			DN dn = new DN("34..32.15=Pete");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 			// This is allowed.  We should only check for an oid string if it starts with
 			// OID (or oid) followed by a period.
 		public void NotQuiteAnOID()
@@ -490,10 +508,10 @@ namespace CPI.DirectoryServices.Tests
 	}
 
 
-	[TestFixture]
-	public class QuotedStringTests
+    [TestFixture, TestClass]
+    public class QuotedStringTests
 	{
-		[Test]
+		[Test, TestMethod]
 		public void Single()
 		{
 			DN dn = new DN(@"OU=""Pete is cool""");
@@ -501,7 +519,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete is cool");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void Beginning()
 		{
 			DN dn = new DN(@"OU=""Pete"",OU=is,OU=cool");
@@ -509,7 +527,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete,OU=is,OU=cool");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void Middle()
 		{
 			DN dn = new DN(@"OU=Pete,OU=""is"",OU=cool");
@@ -517,7 +535,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete,OU=is,OU=cool");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void End()
 		{
 			DN dn = new DN(@"OU=Pete,OU=is,OU=""cool""");
@@ -525,7 +543,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete,OU=is,OU=cool");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void WithUnescapedSpecialChars()
 		{
 			DN dn = new DN(@"OU="",=+<>#; """);
@@ -533,7 +551,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"OU=\,\=\+\<\>\#\;\ ");
 		}
 		
-		[Test]
+		[Test, TestMethod]
 		public void WithEscapedSpecialChars()
 		{
 			DN dn = new DN(@"OU=""\,\=\+\<\>\#\;\\\ """);
@@ -541,9 +559,10 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"OU=\,\=\+\<\>\#\;\\\ ");
 		}
 		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void WithUnterminatedQuotedString()
+		[Test, TestMethod]
+		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        public void WithUnterminatedQuotedString()
 		{
 			DN dn = new DN(@"OU=""Pete is cool");
 		}
