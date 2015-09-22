@@ -856,7 +856,7 @@ namespace CPI.DirectoryServices
 		
 		/// <summary>
 		/// Determines whether the specified character is an LDAP DN special character
-		/// (, or = or + or < or > or # or ; or \ or ")
+		/// (, or = or + or &lt; or > or # or ; or \ or ")
 		/// </summary>
 		/// <param name="c">the character to check</param>
 		/// <returns>true if the specified character is a special character; false otherwise</returns>

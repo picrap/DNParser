@@ -472,7 +472,7 @@ namespace CPI.DirectoryServices
 		/// </summary>
 		ControlChars = 1, 
 		/// <summary>
-		/// The disinguished name special characters ',', '=', '+', '<', '>', '#', ';', '\\', '"'
+		/// The disinguished name special characters ',', '=', '+', '&lt;', '>', '#', ';', '\\', '"'
 		/// </summary>
 		SpecialChars = 2, 
 		/// <summary>
