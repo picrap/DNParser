@@ -112,7 +112,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CPI.DirectoryServices.nuspec" />
+    <None Include="DNParser.nuspec" />
     <None Include="Properties\DNParser.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
