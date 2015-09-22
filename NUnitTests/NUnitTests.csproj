@@ -101,9 +101,13 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NUnitTests.cs">
+    <Compile Include="BaseTests.cs" />
+    <Compile Include="EqualityTests.cs" />
+    <Compile Include="EscapingTests.cs" />
+    <Compile Include="QuotedStringTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="OIDTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

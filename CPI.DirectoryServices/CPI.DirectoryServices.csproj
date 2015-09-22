@@ -91,6 +91,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EscapeChars.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -103,6 +104,8 @@
     <Compile Include="RDNComponent.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RDNComponentList.cs" />
+    <Compile Include="RDNList.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
