@@ -21,24 +21,8 @@ namespace CPI.DirectoryServices
 	public class RDNComponent
 	{
 		# region Enumerations
-		
-		/// <summary>
-		/// Specifies whether the value of the component is a string value, or a binary
-		/// value represented as a string of hex digits
-		/// </summary>
-		public enum RDNValueType 
-		{
-			/// <summary>
-			/// Represents a string value
-			/// </summary>
-			StringValue, 
-			/// <summary>
-			/// Represents a hex-encoded binary value
-			/// </summary>
-			HexValue
-		};
-		
-		# endregion
+
+	    # endregion
 	
 		# region Data Members
 

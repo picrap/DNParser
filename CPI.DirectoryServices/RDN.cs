@@ -310,7 +310,7 @@ namespace CPI.DirectoryServices
 									// If we're at the end of the string, the RDN has an empty value.
 									// We'll store a blank string, then we'll exit the loop gracefully.
 									rawValues.Add("");
-									rawValueTypes.Add(RDNComponent.RDNValueType.StringValue);
+									rawValueTypes.Add(RDNValueType.StringValue);
 									state = ParserState.GetUnquotedValue;
 								}
 								else
@@ -480,7 +480,7 @@ namespace CPI.DirectoryServices
 							// go about our business, and the value will be reported as an empty string.
 							state = ParserState.GetUnquotedValue;
 							rawValues.Add("");
-							rawValueTypes.Add(RDNComponent.RDNValueType.StringValue);
+							rawValueTypes.Add(RDNValueType.StringValue);
 						}
 						
 						break;
@@ -533,7 +533,7 @@ namespace CPI.DirectoryServices
 							// we'll exit the loop gracefully.
 							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
 							rawData.SetLength(0);
-							rawValueTypes.Add(RDNComponent.RDNValueType.HexValue);
+							rawValueTypes.Add(RDNValueType.HexValue);
 						}
 						else if (rdnString[position] == '+')
 						{
@@ -544,7 +544,7 @@ namespace CPI.DirectoryServices
 							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
 							rawData.SetLength(0);
 							state = ParserState.DetermineAttributeType;
-							rawValueTypes.Add(RDNComponent.RDNValueType.HexValue);
+							rawValueTypes.Add(RDNValueType.HexValue);
 						}
 						else
 						{
@@ -640,7 +640,7 @@ namespace CPI.DirectoryServices
 							// we'll exit the loop gracefully.
 							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
 							rawData.SetLength(0);
-							rawValueTypes.Add(RDNComponent.RDNValueType.StringValue);
+							rawValueTypes.Add(RDNValueType.StringValue);
 						}
 						else if (rdnString[position] == '+')
 						{
@@ -650,7 +650,7 @@ namespace CPI.DirectoryServices
 							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
 							rawData.SetLength(0);
 							state = ParserState.DetermineAttributeType;
-							rawValueTypes.Add(RDNComponent.RDNValueType.StringValue);
+							rawValueTypes.Add(RDNValueType.StringValue);
 						}
 						else
 						{
@@ -762,7 +762,7 @@ namespace CPI.DirectoryServices
 								rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
 								rawData.SetLength(0);
 								state = ParserState.DetermineAttributeType;
-								rawValueTypes.Add(RDNComponent.RDNValueType.StringValue);
+								rawValueTypes.Add(RDNValueType.StringValue);
 							}
 							else
 							{
@@ -773,7 +773,7 @@ namespace CPI.DirectoryServices
 						{
 							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
 							rawData.SetLength(0);
-							rawValueTypes.Add(RDNComponent.RDNValueType.StringValue);
+							rawValueTypes.Add(RDNValueType.StringValue);
 						}
 						
 						# endregion
@@ -802,7 +802,7 @@ namespace CPI.DirectoryServices
 			
 			for (int i = 0; i < componentArray.Length; i++)
 			{
-				componentArray[i] = new RDNComponent((string)rawTypes[i], (string)rawValues[i], (RDNComponent.RDNValueType)rawValueTypes[i]);
+				componentArray[i] = new RDNComponent((string)rawTypes[i], (string)rawValues[i], (RDNValueType)rawValueTypes[i]);
 			}
 			
 			Components = new ReadOnlyCollection<RDNComponent>(componentArray);
