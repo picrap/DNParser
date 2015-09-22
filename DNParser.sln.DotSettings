@@ -4,4 +4,5 @@
 	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue"></s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=DC/@EntryIndexedValue">DC</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=DN/@EntryIndexedValue">DN</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=OID/@EntryIndexedValue">OID</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=RDN/@EntryIndexedValue">RDN</s:String></wpf:ResourceDictionary>

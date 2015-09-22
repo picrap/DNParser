@@ -36,8 +36,8 @@ namespace CPI.DirectoryServices
 	
 		# region Data Members
 		
-		private char[] charArray = new char[1];
-		private int hashCode;
+		private readonly char[] charArray = new char[1];
+		private int? hashCode;
 
 		# endregion
 		
@@ -56,15 +56,11 @@ namespace CPI.DirectoryServices
 		internal RDN(string rdnString)
 		{
 			ParseRDN(rdnString);
-			
-			GenerateHashCode();
 		}
 		
 		private RDN(IList<RDNComponent> components)
 		{
 			Components = new ReadOnlyCollection<RDNComponent>(components);
-			
-			GenerateHashCode();
 		}
 		
 		# endregion
@@ -78,7 +74,7 @@ namespace CPI.DirectoryServices
 		/// <returns>true if the specified object equals the current RDN; false otherwise</returns>
 		public override bool Equals(object obj)
 		{
-            if (object.ReferenceEquals(obj, null))
+            if (ReferenceEquals(obj, null))
             {
                 return false;
             }
@@ -90,11 +86,11 @@ namespace CPI.DirectoryServices
 			{
 				RDN rdnObj = (RDN)obj;
 				
-				if (rdnObj.Components.Count == this.Components.Count)
+				if (rdnObj.Components.Count == Components.Count)
 				{
 					for (int i = 0; i < rdnObj.Components.Count; i++)
 					{
-						if (!(rdnObj.Components[i].Equals(this.Components[i])))
+						if (!(rdnObj.Components[i].Equals(Components[i])))
 							return false;
 					}
 					return true;
@@ -110,24 +106,24 @@ namespace CPI.DirectoryServices
 			}
 		}
 		
-		/// <summary>
+        /// <summary>
 		/// Serves as a hash function, suitable for use in hashing algorithms and data structures like a hash table.
 		/// </summary>
 		/// <returns>a 32-bit integer representing the hash code of the current object</returns>
 		public override int GetHashCode()
 		{
-			return hashCode;
-		}
-		
-		private void GenerateHashCode()
-		{
-			// Start with a made-up seed
-			hashCode = 0x74f8149a;
-			
-			for (int i = 0; i < this.Components.Count; i++)
-			{
-				hashCode ^= this.Components[i].GetHashCode();
-			}
+            if (!hashCode.HasValue)
+            {
+                // Start with a made-up seed
+                hashCode = 0x74f8149a;
+
+                for (int i = 0; i < Components.Count; i++)
+                {
+                    hashCode ^= Components[i].GetHashCode();
+                }
+            }
+
+            return hashCode.Value;
 		}
 
 		/// <summary>
@@ -146,19 +142,19 @@ namespace CPI.DirectoryServices
 		/// <returns>a string that represents the current RDN</returns>
 		public string ToString(EscapeChars escapeChars)
 		{
-			StringBuilder ReturnValue = new StringBuilder();
+			StringBuilder returnValue = new StringBuilder();
 			
 			foreach(RDNComponent component in Components)
 			{
-				ReturnValue.Append(component.ToString(escapeChars));
-				ReturnValue.Append("+");
+				returnValue.Append(component.ToString(escapeChars));
+				returnValue.Append("+");
 			}
 
 			// Get rid of the last plus sign			
-			if (ReturnValue.Length > 0)
-				ReturnValue.Length--;
+			if (returnValue.Length > 0)
+				returnValue.Length--;
 				
-			return ReturnValue.ToString();
+			return returnValue.ToString();
 		}
 		
 		
@@ -210,15 +206,15 @@ namespace CPI.DirectoryServices
 						
 						if (IsAlpha(rdnString[position]))
 						{
-							string StartPoint = rdnString.Substring(position);
+							string startPoint = rdnString.Substring(position);
 							
 							// OID. is an optional string at the beginning of an object identifier.
 							// if we find it, we ignore it, but we assume that the rest of the type
 							// is going to be in dotted OID format.  We advance 3 positions, which puts
 							// us at the dot, so at the next iteration, we start at the first number
 							// of the OID.
-							if (StartPoint.StartsWith("OID.") ||
-								StartPoint.StartsWith("oid."))
+							if (startPoint.StartsWith("OID.") ||
+								startPoint.StartsWith("oid."))
 							{
 								position += 4;
 								state = ParserState.GetTypeByOID;
@@ -385,11 +381,11 @@ namespace CPI.DirectoryServices
 							{
 								position++;
 								
-								string OID = Encoding.UTF8.GetString(rawData.ToArray());
+								string oid = Encoding.UTF8.GetString(rawData.ToArray());
 							
 								# region OIDs aren't allowed to end with a period
 								
-								if (OID.EndsWith("."))
+								if (oid.EndsWith("."))
 								{
 									throw new ArgumentException("Invalid RDN: OID cannot end with a period", rdnString);
 								}
@@ -398,7 +394,7 @@ namespace CPI.DirectoryServices
 								
 								# region You're also not allowed to have two periods in a row
 								
-								if (OID.IndexOf("..") > -1)
+								if (oid.IndexOf("..", StringComparison.Ordinal) > -1)
 									throw new ArgumentException("Invalid RDN: OIDs cannot have two periods in a row", rdnString);
 
 								# endregion
@@ -411,7 +407,7 @@ namespace CPI.DirectoryServices
 								// "12.3.4.2".  If we see a leading zero, we don't just ignore it.
 								// We complain about it.  LOUDLY.
 								
-								string[] oidPieces = OID.Split('.');
+								string[] oidPieces = oid.Split('.');
 								
 								foreach (string oidPiece in oidPieces)
 								{
@@ -421,7 +417,7 @@ namespace CPI.DirectoryServices
 								
 								# endregion
 							
-								rawTypes.Add(OID);
+								rawTypes.Add(oid);
 								rawData.SetLength(0);
 								state = ParserState.DetermineValueType;
 							}
@@ -872,9 +868,9 @@ namespace CPI.DirectoryServices
 		/// <returns>true if the two objects are equal; false otherwise</returns>
 		public static bool operator == (RDN obj1, RDN obj2)
 		{
-			if (object.ReferenceEquals(obj1, null))
+			if (ReferenceEquals(obj1, null))
 			{
-				return (object.ReferenceEquals(obj2, null));
+				return (ReferenceEquals(obj2, null));
 			}
 			else
 			{

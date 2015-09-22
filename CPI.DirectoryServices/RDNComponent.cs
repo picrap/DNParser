@@ -10,7 +10,6 @@
 
 using System;
 using System.Text;
-using System.IO;
 
 namespace CPI.DirectoryServices
 {
@@ -42,11 +41,8 @@ namespace CPI.DirectoryServices
 		# endregion
 	
 		# region Data Members
-		
-		private string componentType;
-		private string componentValue;
-		private RDNValueType componentValueType;
-		private int hashCode;
+
+	    private int? hashCode;
 		
 		# endregion
 		
@@ -55,47 +51,27 @@ namespace CPI.DirectoryServices
 		/// <summary>
 		/// Gets the RDN component type ('CN', 'OU', 'DC', etc.)
 		/// </summary>
-		public string ComponentType
-		{
-			get
-			{
-				return componentType;
-			}
-		}
-		
-		/// <summary>
+		public string ComponentType { get; }
+
+	    /// <summary>
 		/// Gets the value of the RDN component
 		/// </summary>
-		public string ComponentValue
-		{
-			get
-			{
-				return componentValue;
-			}
-		}
-		
-		/// <summary>
+		public string ComponentValue { get; }
+
+	    /// <summary>
 		/// Gets the encoding type of the RDN value (either a string or hex-encoded binary value)
 		/// </summary>
-		public RDNValueType ComponentValueType
-		{
-			get
-			{
-				return componentValueType;
-			}
-		}
-		
-		# endregion
+		public RDNValueType ComponentValueType { get; }
+
+	    # endregion
 		
 		# region Constructors
 		
-		internal RDNComponent(string ComponentType, string ComponentValue, RDNValueType ComponentValueType)
+		internal RDNComponent(string componentType, string componentValue, RDNValueType componentValueType)
 		{
-			componentType = ComponentType;
-			componentValue = ComponentValue;
-			componentValueType = ComponentValueType;
-			
-			GenerateHashCode();
+			ComponentType = componentType;
+			ComponentValue = componentValue;
+			ComponentValueType = componentValueType;
 		}
 		
 		# endregion
@@ -109,21 +85,21 @@ namespace CPI.DirectoryServices
 		/// <returns>true if the specified object equals the current RDNComponent; false otherwise</returns>
 		public override bool Equals(object obj)
 		{
-            if (object.ReferenceEquals(obj, null))
+            if (ReferenceEquals(obj, null))
             {
                 return false;
             }
 
-			if (this.hashCode != obj.GetHashCode())
+			if (hashCode != obj.GetHashCode())
 				return false;
 		
 			if (obj is RDNComponent)
 			{
 				RDNComponent rdnObj = (RDNComponent)obj;
 
-				return (rdnObj.componentValueType == this.componentValueType &&
-					string.Compare(rdnObj.componentType, this.componentType, true) == 0 &&
-					string.Compare(rdnObj.componentValue, this.componentValue, true) == 0
+				return (rdnObj.ComponentValueType == ComponentValueType &&
+					string.Compare(rdnObj.ComponentType, ComponentType, StringComparison.OrdinalIgnoreCase) == 0 &&
+					string.Compare(rdnObj.ComponentValue, ComponentValue, StringComparison.OrdinalIgnoreCase) == 0
 					);
 			}
 			else
@@ -131,28 +107,27 @@ namespace CPI.DirectoryServices
 				return false;
 			}
 		}
-		
-		private void GenerateHashCode()
-		{
-			// start with a made-up seed
-			hashCode = 0x48012e7a;
-			
-			hashCode ^= this.componentValueType.GetHashCode();
-			
-			if (this.componentType != null)
-				hashCode ^= this.componentType.ToLower().GetHashCode();
-				
-			if (this.componentValue != null)
-				hashCode ^= this.componentValue.ToLower().GetHashCode();
-		}
-		
-		/// <summary>
+
+	    /// <summary>
 		/// Serves as a hash function, suitable for use in hashing algorithms and data structures like a hash table.
 		/// </summary>
 		/// <returns>a 32-bit integer representing the hash code of the current object</returns>
 		public override int GetHashCode()
 		{
-			return hashCode;
+            if(!hashCode.HasValue)
+            {
+                // start with a made-up seed
+                hashCode = 0x48012e7a;
+			
+                hashCode ^= ComponentValueType.GetHashCode();
+			
+                if (this.ComponentType != null)
+                    hashCode ^= this.ComponentType.ToLower().GetHashCode();
+				
+                if (this.ComponentValue != null)
+                    hashCode ^= this.ComponentValue.ToLower().GetHashCode();
+            }
+		    return hashCode.Value;
 		}
 
 		/// <summary>
@@ -171,13 +146,13 @@ namespace CPI.DirectoryServices
 		/// <returns>a string that represents the current RDNComponent</returns>
 		public string ToString(EscapeChars escapeChars)
 		{
-			if (this.componentValueType == RDNValueType.HexValue)
+			if (ComponentValueType == RDNValueType.HexValue)
 			{
-				return this.componentType + "=" + this.componentValue;
+				return $"{ComponentType}={ComponentValue}";
 			}
 			else
 			{
-				return this.componentType + "=" + EscapeValue(this.componentValue, escapeChars);
+				return $"{ComponentType}={EscapeValue(ComponentValue, escapeChars)}";
 			}
 		}
 		
@@ -194,37 +169,37 @@ namespace CPI.DirectoryServices
 		/// <returns>an escaped string</returns>
 		public static string EscapeValue(string s, EscapeChars escapeChars)
 		{
-			StringBuilder ReturnValue = new StringBuilder();
+			StringBuilder returnValue = new StringBuilder();
 			
 			for(int i = 0; i < s.Length; i++)
 			{
 				if (RDN.IsSpecialChar(s[i]) || ((i == 0 || i == s.Length - 1) && s[i] == ' '))
 				{
 					if ((escapeChars & EscapeChars.SpecialChars) != EscapeChars.None)
-						ReturnValue.Append('\\');
+						returnValue.Append('\\');
 
-					ReturnValue.Append(s[i]);
+					returnValue.Append(s[i]);
 				}
 				else if (s[i] < 32 && ((escapeChars & EscapeChars.ControlChars) != EscapeChars.None))
 				{
-					ReturnValue.AppendFormat("\\{0:X2}", (int)s[i]);
+					returnValue.AppendFormat("\\{0:X2}", (int)s[i]);
 				}
 				else if (s[i] >= 128 && ((escapeChars & EscapeChars.MultibyteChars) != EscapeChars.None))
 				{
-					byte[] Bytes = Encoding.UTF8.GetBytes(new char[]{s[i]});
+					byte[] bytes = Encoding.UTF8.GetBytes(new []{s[i]});
 				
-					foreach (byte b in Bytes)
+					foreach (byte b in bytes)
 					{
-						ReturnValue.AppendFormat("\\{0:X2}", b);
+						returnValue.AppendFormat("\\{0:X2}", b);
 					}
 				}
 				else
 				{
-					ReturnValue.Append(s[i]);
+					returnValue.Append(s[i]);
 				}
 			}
 			
-			return ReturnValue.ToString();
+			return returnValue.ToString();
 		}
 		
 		
@@ -240,9 +215,9 @@ namespace CPI.DirectoryServices
 		/// <returns>true if the two objects are equal; false otherwise</returns>
 		public static bool operator == (RDNComponent obj1, RDNComponent obj2)
 		{
-			if (object.ReferenceEquals(obj1, null))
+			if (ReferenceEquals(obj1, null))
 			{
-				return (object.ReferenceEquals(obj2, null));
+				return (ReferenceEquals(obj2, null));
 			}
 			else
 			{

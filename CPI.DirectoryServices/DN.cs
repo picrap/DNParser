@@ -32,14 +32,11 @@ namespace CPI.DirectoryServices
 		
 		# region Static Data Members
 
-		private static EscapeChars defaultEscapeChars = EscapeChars.ControlChars | EscapeChars.SpecialChars;
-		
-		# endregion
+	    # endregion
 		
 		# region Data Members
-		
-		private EscapeChars escapeChars;
-		private int hashCode;
+
+	    private int? hashCode;
 		
 		# endregion
 		
@@ -49,19 +46,9 @@ namespace CPI.DirectoryServices
 		/// Gets or sets the categories of special characters that will be 
 		/// escaped with a backslash when the DN is printed as a string.
 		/// </summary>
-		public EscapeChars CharsToEscape
-		{
-			get
-			{
-				return escapeChars;
-			}
-			set
-			{
-				escapeChars = value;
-			}
-		}
-		
-		/// <summary>
+		public EscapeChars CharsToEscape { get; set; }
+
+	    /// <summary>
 		/// Gets a list of all of the relative distinguished names that
 		/// make up this distinguished name.
 		/// </summary>
@@ -83,7 +70,7 @@ namespace CPI.DirectoryServices
 						parentRDNs[i] = RDNs[i + 1];
 					}
 					
-					return new DN(new ReadOnlyCollection<RDN>(parentRDNs), this.CharsToEscape);
+					return new DN(new ReadOnlyCollection<RDN>(parentRDNs), CharsToEscape);
 				}
 				else
 				{
@@ -111,23 +98,19 @@ namespace CPI.DirectoryServices
 		{
             if (dnString == null)
             {
-                throw new ArgumentNullException("dnString");
+                throw new ArgumentNullException(nameof(dnString));
             }
 
-			this.escapeChars = escapeChars;
+			CharsToEscape = escapeChars;
 		
 			ParseDN(dnString);
-			
-			GenerateHashCode();
 		}
 		
 		private DN(IList<RDN> rdnList, EscapeChars escapeChars)
 		{
-			this.escapeChars = escapeChars;
+			CharsToEscape = escapeChars;
 
 		    RDNs = new ReadOnlyCollection<RDN>(rdnList);
-			
-			GenerateHashCode();
 		}
 		
 		# endregion
@@ -141,7 +124,7 @@ namespace CPI.DirectoryServices
 		/// <returns>true if the specified object equals the current DN; false otherwise</returns>
 		public override bool Equals(object obj)
 		{
-            if (object.ReferenceEquals(obj, null))
+            if (ReferenceEquals(obj, null))
             {
                 return false;
             }
@@ -153,11 +136,11 @@ namespace CPI.DirectoryServices
 			{
 				DN dnObj = (DN)obj;
 				
-				if (dnObj.RDNs.Count == this.RDNs.Count)
+				if (dnObj.RDNs.Count == RDNs.Count)
 				{
-					for (int i = 0; i < this.RDNs.Count; i++)
+					for (int i = 0; i < RDNs.Count; i++)
 					{
-						if (!(dnObj.RDNs[i].Equals(this.RDNs[i])))
+						if (!(dnObj.RDNs[i].Equals(RDNs[i])))
 							return false;	
 					}
 					return true;
@@ -179,27 +162,26 @@ namespace CPI.DirectoryServices
 		/// <returns>a 32-bit integer representing the hash code of the current object</returns>
 		public override int GetHashCode()
 		{
-			return hashCode;
-		}
+		    if (!hashCode.HasValue)
+		    {
+                // start with a made-up seed
+                hashCode = 0x28f527b4;
 
-		private void GenerateHashCode()
-		{
-			// start with a made-up seed
-			hashCode = 0x28f527b4;
-			
-			for (int i = 0; i < this.RDNs.Count; i++)
-			{
-				hashCode ^= this.RDNs[i].GetHashCode();
-			}
+                for (int i = 0; i < RDNs.Count; i++)
+                {
+                    hashCode ^= RDNs[i].GetHashCode();
+                }
+            }
+            return hashCode.Value;
 		}
-		
+        
 		/// <summary>
 		/// Returns a string that represents the current DN.
 		/// </summary>
 		/// <returns>a string that represents the current DN</returns>
 		public override string ToString()
 		{
-			return ToString(this.escapeChars);
+			return ToString(CharsToEscape);
 		}
 		
 		/// <summary>
@@ -209,19 +191,19 @@ namespace CPI.DirectoryServices
 		/// <returns>a string that represents the current DN</returns>
 		public string ToString(EscapeChars escapeChars)
 		{
-			StringBuilder ReturnValue = new StringBuilder();
+			StringBuilder returnValue = new StringBuilder();
 			
 			foreach (RDN rdn in RDNs)
 			{
-				ReturnValue.Append(rdn.ToString(escapeChars));
-				ReturnValue.Append(",");
+				returnValue.Append(rdn.ToString(escapeChars));
+				returnValue.Append(",");
 			}
 			
 			// Remove the trailing comma
-			if (ReturnValue.Length > 0)
-				ReturnValue.Length--;
+			if (returnValue.Length > 0)
+				returnValue.Length--;
 				
-			return ReturnValue.ToString();
+			return returnValue.ToString();
 		}
 
 		
@@ -346,13 +328,13 @@ namespace CPI.DirectoryServices
 		/// <returns>true if childDN is a child of the current DN; false otherwise</returns>
 		public bool Contains(DN childDN)
 		{
-			if (childDN.RDNs.Count > this.RDNs.Count)
+			if (childDN.RDNs.Count > RDNs.Count)
 			{
-				int Offset = childDN.RDNs.Count - this.RDNs.Count;
+				int offset = childDN.RDNs.Count - RDNs.Count;
 				
-				for (int i = 0; i < this.RDNs.Count; i++)
+				for (int i = 0; i < RDNs.Count; i++)
 				{
-					if (childDN.RDNs[i + Offset] != this.RDNs[i])
+					if (childDN.RDNs[i + offset] != RDNs[i])
 						return false;
 				}
 				
@@ -375,18 +357,18 @@ namespace CPI.DirectoryServices
 			
 			if (childDN.RDNs.Count > 0)
 			{
-				RDN[] fullPath = new RDN[this.RDNs.Count + childDN.RDNs.Count];
+				RDN[] fullPath = new RDN[RDNs.Count + childDN.RDNs.Count];
 				
 				for (int i = 0; i < childDN.RDNs.Count; i++)
 				{
 					fullPath[i] = childDN.RDNs[i];
 				}
-				for (int j = 0; j < this.RDNs.Count; j++)
+				for (int j = 0; j < RDNs.Count; j++)
 				{
-					fullPath[j + childDN.RDNs.Count] = this.RDNs[j];
+					fullPath[j + childDN.RDNs.Count] = RDNs[j];
 				}
 				
-				return new DN(fullPath, this.CharsToEscape);
+				return new DN(fullPath, CharsToEscape);
 			}
 			else
 			{
@@ -407,9 +389,9 @@ namespace CPI.DirectoryServices
 		/// <returns>true if the two objects are equal; false otherwise</returns>
 		public static bool operator == (DN obj1, DN obj2)
 		{
-			if (object.ReferenceEquals(obj1, null))
+			if (ReferenceEquals(obj1, null))
 			{
-				return (object.ReferenceEquals(obj2, null));
+				return (ReferenceEquals(obj2, null));
 			}
 			else
 			{
@@ -436,18 +418,8 @@ namespace CPI.DirectoryServices
 		/// Gets or sets the categories of characters that will be 
 		/// escaped by default when a DN is converted to a string
 		/// </summary>
-		public static EscapeChars DefaultEscapeChars
-		{
-			get
-			{
-				return defaultEscapeChars;
-			}
-			set
-			{
-				defaultEscapeChars = value;
-			}
-		}
-		
-		# endregion
+		public static EscapeChars DefaultEscapeChars { get; set; } = EscapeChars.ControlChars | EscapeChars.SpecialChars;
+
+	    # endregion
 	}
 }
