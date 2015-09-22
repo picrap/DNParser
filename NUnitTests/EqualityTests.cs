@@ -23,15 +23,15 @@ namespace CPI.DirectoryServices.Tests
         {
             DN dn1 = new DN("");
 			
-            Assert.AreEqual(dn1.RDNs.Length, 0);
+            Assert.AreEqual(dn1.RDNs.Count, 0);
 			
             DN dn2 = new DN("CN=Pete");
 			
-            Assert.AreEqual(dn2.RDNs.Length, 1);
+            Assert.AreEqual(dn2.RDNs.Count, 1);
 			
             DN dn3 = new DN("CN=Pete,OU=People,DC=example,DC=com");
 			
-            Assert.AreEqual(dn3.RDNs.Length, 4);
+            Assert.AreEqual(dn3.RDNs.Count, 4);
         }
 		
         [Test, TestMethod]
@@ -39,11 +39,11 @@ namespace CPI.DirectoryServices.Tests
         {
             DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
 			
-            Assert.AreEqual(dn1.RDNs[0].Components.Length, 1);
+            Assert.AreEqual(dn1.RDNs[0].Components.Count, 1);
 			
             DN dn2 = new DN("CN=Pete+SN=Everett,OU=People,DC=example,DC=com");
 			
-            Assert.AreEqual(dn2.RDNs[0].Components.Length, 2);
+            Assert.AreEqual(dn2.RDNs[0].Components.Count, 2);
         }
 		
         [Test, TestMethod]

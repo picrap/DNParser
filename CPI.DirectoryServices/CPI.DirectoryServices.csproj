@@ -104,8 +104,6 @@
     <Compile Include="RDNComponent.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RDNComponentList.cs" />
-    <Compile Include="RDNList.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

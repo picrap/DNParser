@@ -20,7 +20,7 @@ namespace SampleCode
 			DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
 			Console.WriteLine(dn1);
 			
-			while (dn1.RDNs.Length > 0)
+			while (dn1.RDNs.Count > 0)
 			{
 				dn1 = dn1.Parent;
 				Console.WriteLine(dn1);

@@ -10,6 +10,8 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace CPI.DirectoryServices
@@ -36,7 +38,6 @@ namespace CPI.DirectoryServices
 		
 		# region Data Members
 		
-		private RDNList rDNs;
 		private EscapeChars escapeChars;
 		private int hashCode;
 		
@@ -64,13 +65,7 @@ namespace CPI.DirectoryServices
 		/// Gets a list of all of the relative distinguished names that
 		/// make up this distinguished name.
 		/// </summary>
-		public RDNList RDNs
-		{
-			get
-			{
-				return rDNs;
-			}
-		}
+		public IList<RDN> RDNs { get; private set; }
 		
 		/// <summary>
 		/// Gets a DN object representing the object that contains the current DN.
@@ -79,16 +74,16 @@ namespace CPI.DirectoryServices
 		{
 			get
 			{
-				if (rDNs.Length >= 1)
+				if (RDNs.Count >= 1)
 				{
-					RDN[] parentRDNs = new RDN[rDNs.Length - 1];
+					RDN[] parentRDNs = new RDN[RDNs.Count - 1];
 					
 					for (int i = 0; i < parentRDNs.Length; i++)
 					{
-						parentRDNs[i] = rDNs[i + 1];
+						parentRDNs[i] = RDNs[i + 1];
 					}
 					
-					return new DN(new RDNList(parentRDNs), this.CharsToEscape);
+					return new DN(new ReadOnlyCollection<RDN>(parentRDNs), this.CharsToEscape);
 				}
 				else
 				{
@@ -126,11 +121,11 @@ namespace CPI.DirectoryServices
 			GenerateHashCode();
 		}
 		
-		private DN(RDNList rdnList, EscapeChars escapeChars)
+		private DN(IList<RDN> rdnList, EscapeChars escapeChars)
 		{
 			this.escapeChars = escapeChars;
-		
-			rDNs = rdnList;
+
+		    RDNs = new ReadOnlyCollection<RDN>(rdnList);
 			
 			GenerateHashCode();
 		}
@@ -158,11 +153,11 @@ namespace CPI.DirectoryServices
 			{
 				DN dnObj = (DN)obj;
 				
-				if (dnObj.rDNs.Length == this.rDNs.Length)
+				if (dnObj.RDNs.Count == this.RDNs.Count)
 				{
-					for (int i = 0; i < this.rDNs.Length; i++)
+					for (int i = 0; i < this.RDNs.Count; i++)
 					{
-						if (!(dnObj.rDNs[i].Equals(this.rDNs[i])))
+						if (!(dnObj.RDNs[i].Equals(this.RDNs[i])))
 							return false;	
 					}
 					return true;
@@ -192,9 +187,9 @@ namespace CPI.DirectoryServices
 			// start with a made-up seed
 			hashCode = 0x28f527b4;
 			
-			for (int i = 0; i < this.rDNs.Length; i++)
+			for (int i = 0; i < this.RDNs.Count; i++)
 			{
-				hashCode ^= this.rDNs[i].GetHashCode();
+				hashCode ^= this.RDNs[i].GetHashCode();
 			}
 		}
 		
@@ -235,7 +230,7 @@ namespace CPI.DirectoryServices
 			// If the string has nothing in it, that's allowed.  Just return an empty array.
 			if (dnString.Length == 0)
 			{
-				rDNs = new RDNList(new RDN[0]);
+				RDNs = new RDN[0];
 				return;  // That was easy...
 			}
 			
@@ -336,7 +331,7 @@ namespace CPI.DirectoryServices
 				results[i] = new RDN(rawRDNs[i].ToString());
 			}	
 			
-			rDNs = new RDNList(results);
+			RDNs = new ReadOnlyCollection<RDN>(results);
 		}
 		
 		/// <summary>
@@ -351,13 +346,13 @@ namespace CPI.DirectoryServices
 		/// <returns>true if childDN is a child of the current DN; false otherwise</returns>
 		public bool Contains(DN childDN)
 		{
-			if (childDN.rDNs.Length > this.rDNs.Length)
+			if (childDN.RDNs.Count > this.RDNs.Count)
 			{
-				int Offset = childDN.rDNs.Length - this.rDNs.Length;
+				int Offset = childDN.RDNs.Count - this.RDNs.Count;
 				
-				for (int i = 0; i < this.rDNs.Length; i++)
+				for (int i = 0; i < this.RDNs.Count; i++)
 				{
-					if (childDN.rDNs[i + Offset] != this.rDNs[i])
+					if (childDN.RDNs[i + Offset] != this.RDNs[i])
 						return false;
 				}
 				
@@ -378,20 +373,20 @@ namespace CPI.DirectoryServices
 		{
 			DN childDN = new DN(childRDN);
 			
-			if (childDN.rDNs.Length > 0)
+			if (childDN.RDNs.Count > 0)
 			{
-				RDN[] fullPath = new RDN[this.RDNs.Length + childDN.rDNs.Length];
+				RDN[] fullPath = new RDN[this.RDNs.Count + childDN.RDNs.Count];
 				
-				for (int i = 0; i < childDN.rDNs.Length; i++)
+				for (int i = 0; i < childDN.RDNs.Count; i++)
 				{
-					fullPath[i] = childDN.rDNs[i];
+					fullPath[i] = childDN.RDNs[i];
 				}
-				for (int j = 0; j < this.rDNs.Length; j++)
+				for (int j = 0; j < this.RDNs.Count; j++)
 				{
-					fullPath[j + childDN.rDNs.Length] = this.rDNs[j];
+					fullPath[j + childDN.RDNs.Count] = this.RDNs[j];
 				}
 				
-				return new DN(new RDNList(fullPath), this.CharsToEscape);
+				return new DN(fullPath, this.CharsToEscape);
 			}
 			else
 			{

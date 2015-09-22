@@ -11,6 +11,8 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.IO;
 
@@ -34,7 +36,6 @@ namespace CPI.DirectoryServices
 	
 		# region Data Members
 		
-		private RDNComponentList components;
 		private char[] charArray = new char[1];
 		private int hashCode;
 
@@ -46,13 +47,7 @@ namespace CPI.DirectoryServices
 		/// <summary>
 		/// Gets a collection of components that make up this RDN
 		/// </summary>
-		public RDNComponentList Components
-		{
-			get
-			{
-				return components;
-			}
-		}
+		public IList<RDNComponent> Components { get; private set; }
 		
 		# endregion
 		
@@ -65,9 +60,9 @@ namespace CPI.DirectoryServices
 			GenerateHashCode();
 		}
 		
-		private RDN(RDNComponentList components)
+		private RDN(IList<RDNComponent> components)
 		{
-			this.components = components;
+			Components = new ReadOnlyCollection<RDNComponent>(components);
 			
 			GenerateHashCode();
 		}
@@ -95,11 +90,11 @@ namespace CPI.DirectoryServices
 			{
 				RDN rdnObj = (RDN)obj;
 				
-				if (rdnObj.components.Length == this.components.Length)
+				if (rdnObj.Components.Count == this.Components.Count)
 				{
-					for (int i = 0; i < rdnObj.components.Length; i++)
+					for (int i = 0; i < rdnObj.Components.Count; i++)
 					{
-						if (!(rdnObj.components[i].Equals(this.components[i])))
+						if (!(rdnObj.Components[i].Equals(this.Components[i])))
 							return false;
 					}
 					return true;
@@ -129,9 +124,9 @@ namespace CPI.DirectoryServices
 			// Start with a made-up seed
 			hashCode = 0x74f8149a;
 			
-			for (int i = 0; i < this.components.Length; i++)
+			for (int i = 0; i < this.Components.Count; i++)
 			{
-				hashCode ^= this.components[i].GetHashCode();
+				hashCode ^= this.Components[i].GetHashCode();
 			}
 		}
 
@@ -153,7 +148,7 @@ namespace CPI.DirectoryServices
 		{
 			StringBuilder ReturnValue = new StringBuilder();
 			
-			foreach(RDNComponent component in components)
+			foreach(RDNComponent component in Components)
 			{
 				ReturnValue.Append(component.ToString(escapeChars));
 				ReturnValue.Append("+");
@@ -814,7 +809,7 @@ namespace CPI.DirectoryServices
 				componentArray[i] = new RDNComponent((string)rawTypes[i], (string)rawValues[i], (RDNComponent.RDNValueType)rawValueTypes[i]);
 			}
 			
-			components = new RDNComponentList(componentArray);
+			Components = new ReadOnlyCollection<RDNComponent>(componentArray);
 
 			# endregion
 		}
