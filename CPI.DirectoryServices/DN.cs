@@ -129,7 +129,7 @@ namespace CPI.DirectoryServices
                 return false;
             }
 
-			if (hashCode != obj.GetHashCode())
+			if (GetHashCode() != obj.GetHashCode())
 				return false;
 		
 			if (obj is DN)
