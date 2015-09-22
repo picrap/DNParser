@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$-pre</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://www.codeproject.com/info/cpol10.aspx</licenseUrl>
+    <projectUrl>https://github.com/picrap/DNParser</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/picrap/DNParser/master/Icon/DNParser.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Distinguished Name Parser</summary>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright Pete Everett 2005-2015</copyright>
+    <tags>rfc2253 dn rdn parser x500 relative distinguished name</tags>
+    <developmentDependency>false</developmentDependency>
+  </metadata>
+  <files>
+    <file src="$ProjectDir$bin\$ConfigurationName$\CPI.DirectoryServices.xml" target="lib\net40-Client"/>
+  </files>
+</package>
