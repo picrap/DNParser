@@ -7,18 +7,20 @@
 * (C) 2005 Pete Everett (http://www.CynicalPirate.com)
 *
 *******************************************************************************/
+/******************************************************************************
+ * Modified by: Thomas Würtz to support .NET Standard 2019-01-21
+ ******************************************************************************/
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace CPI.DirectoryServices.Tests
 {
-    [TestFixture, TestClass]
+    [TestFixture]
     public class OIDTests
     {
-        [Test, TestMethod]
+        [Test]
         public void Single()
         {
             DN dn1 = new DN(@"OID.3.43.128=Pete");
@@ -29,7 +31,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn2,dn3);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void Beginning()
         {
             DN dn1 = new DN(@"OID.3.43.128=Pete,OU=People,DC=example,DC=com");
@@ -40,7 +42,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn2,dn3);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void Middle()
         {
             DN dn1 = new DN(@"CN=Pete,OID.3.43.128=Pete,OU=People,DC=example,DC=com");
@@ -51,7 +53,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn2,dn3);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void End()
         {
             DN dn1 = new DN(@"OU=People,DC=example,OID.3.43.128=com");
@@ -62,31 +64,34 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn2,dn3);
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void MixedCase()
         {
-            DN dn = new DN("oId.3.23.1=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("oId.3.23.1=Pete");
+            });
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void LeadingZeroBeginning1()
         {
-            DN dn1 = new DN("03.23.1=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn1 = new DN("03.23.1=Pete");
+            });
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void LeadingZeroBeginning2()
         {
-            DN dn = new DN("OID.03.23.1=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("OID.03.23.1=Pete");
+            });
         }
 		
-        [Test, TestMethod]
+        [Test]
         // This next one actually valid.  You're allowed to have a zero...just not a 
         // non-zero number with a leading zero.
         public void LeadingZeroBeginning3()
@@ -97,23 +102,25 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn1, dn2);
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void LeadingZeroMiddle1()
         {
-            DN dn = new DN("34.03.21=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("34.03.21=Pete");
+            });
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void LeadingZeroMiddle2()
         {
-            DN dn = new DN("OID.34.03.21=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("OID.34.03.21=Pete");
+            });
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void LeadingZeroMiddle3()
         {
             DN dn1 = new DN("34.0.21=Pete");
@@ -122,23 +129,26 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn1, dn2);
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void LeadingZeroEnd1()
         {
-            DN dn = new DN("32.21.05=Pete");
+
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("32.21.05=Pete");
+            });
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void LeadingZeroEnd2()
         {
-            DN dn = new DN("OID.32.21.05=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("OID.32.21.05=Pete");
+            });
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void LeadingZeroEnd3()
         {
             DN dn1 = new DN("32.21.0=Pete");
@@ -147,7 +157,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn1, dn2);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void Spaces()
         {
             DN dn1 = new DN("   32.21.0   =    Pete");
@@ -158,23 +168,25 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn2, dn3);
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void TrailingPeriod()
         {
-            DN dn = new DN("OID.34.54.15.=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("OID.34.54.15.=Pete");
+            });
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AdjacentPeriods()
         {
-            DN dn = new DN("34..32.15=Pete");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN("34..32.15=Pete");
+            });
         }
 		
-        [Test, TestMethod]
+        [Test]
         // This is allowed.  We should only check for an oid string if it starts with
         // OID (or oid) followed by a period.
         public void NotQuiteAnOID()

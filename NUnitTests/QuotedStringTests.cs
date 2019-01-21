@@ -1,14 +1,13 @@
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace CPI.DirectoryServices.Tests
 {
-    [TestFixture, TestClass]
+    [TestFixture]
     public class QuotedStringTests
 	{
-		[Test, TestMethod]
+		[Test]
 		public void Single()
 		{
 			DN dn = new DN(@"OU=""Pete is cool""");
@@ -16,7 +15,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete is cool");
 		}
 		
-		[Test, TestMethod]
+		[Test]
 		public void Beginning()
 		{
 			DN dn = new DN(@"OU=""Pete"",OU=is,OU=cool");
@@ -24,7 +23,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete,OU=is,OU=cool");
 		}
 		
-		[Test, TestMethod]
+		[Test]
 		public void Middle()
 		{
 			DN dn = new DN(@"OU=Pete,OU=""is"",OU=cool");
@@ -32,7 +31,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete,OU=is,OU=cool");
 		}
 		
-		[Test, TestMethod]
+		[Test]
 		public void End()
 		{
 			DN dn = new DN(@"OU=Pete,OU=is,OU=""cool""");
@@ -40,7 +39,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), "OU=Pete,OU=is,OU=cool");
 		}
 		
-		[Test, TestMethod]
+		[Test]
 		public void WithUnescapedSpecialChars()
 		{
 			DN dn = new DN(@"OU="",=+<>#; """);
@@ -48,7 +47,7 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"OU=\,\=\+\<\>\#\;\ ");
 		}
 		
-		[Test, TestMethod]
+		[Test]
 		public void WithEscapedSpecialChars()
 		{
 			DN dn = new DN(@"OU=""\,\=\+\<\>\#\;\\\ """);
@@ -56,12 +55,13 @@ namespace CPI.DirectoryServices.Tests
 			Assert.AreEqual(dn.ToString(), @"OU=\,\=\+\<\>\#\;\\\ ");
 		}
 		
-		[Test, TestMethod]
-		[NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+		[Test]
         public void WithUnterminatedQuotedString()
 		{
-			DN dn = new DN(@"OU=""Pete is cool");
+		    Assert.Throws<ArgumentException>(() =>
+		    {
+		        DN dn = new DN(@"OU=""Pete is cool");
+		    });
 		}
 	}
 }
