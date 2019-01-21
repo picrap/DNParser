@@ -7,7 +7,9 @@
 * (C) 2005 Pete Everett (http://www.CynicalPirate.com)
 *
 *******************************************************************************/
-
+/******************************************************************************
+ * Modified by: Thomas Würtz to support .NET Standard 2019-01-21
+ ******************************************************************************/
 
 using System;
 using System.Collections;
@@ -170,9 +172,9 @@ namespace CPI.DirectoryServices
 		
 		private void ParseRDN(string rdnString)
 		{
-			ArrayList rawTypes = new ArrayList();
-			ArrayList rawValues = new ArrayList();
-			ArrayList rawValueTypes = new ArrayList();
+			List<string> rawTypes = new List<string>();
+			List<string> rawValues = new List<string>();
+			List<RDNValueType> rawValueTypes = new List<RDNValueType>();
 			
 			MemoryStream rawData = new MemoryStream();
 			
@@ -302,7 +304,7 @@ namespace CPI.DirectoryServices
 							if (rdnString[position] == '=')
 							{
 								position++;
-								rawTypes.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+								rawTypes.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 								rawData.SetLength(0);
 								
 								if (position >= rdnString.Length)
@@ -381,7 +383,7 @@ namespace CPI.DirectoryServices
 							{
 								position++;
 								
-								string oid = Encoding.UTF8.GetString(rawData.ToArray());
+								string oid = Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length);
 							
 								# region OIDs aren't allowed to end with a period
 								
@@ -531,7 +533,7 @@ namespace CPI.DirectoryServices
 						{
 							// If we're at the end of the string, just store what we've found and 
 							// we'll exit the loop gracefully.
-							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 							rawData.SetLength(0);
 							rawValueTypes.Add(RDNValueType.HexValue);
 						}
@@ -541,7 +543,7 @@ namespace CPI.DirectoryServices
 							// pair after it.  We'll store what we've found, advance to the next character,
 							// and set the state to DetermineAttributeType.
 							position++;
-							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 							rawData.SetLength(0);
 							state = ParserState.DetermineAttributeType;
 							rawValueTypes.Add(RDNValueType.HexValue);
@@ -638,7 +640,7 @@ namespace CPI.DirectoryServices
 						{
 							// If we're at the end of the string, just store what we've found and 
 							// we'll exit the loop gracefully.
-							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 							rawData.SetLength(0);
 							rawValueTypes.Add(RDNValueType.StringValue);
 						}
@@ -647,7 +649,7 @@ namespace CPI.DirectoryServices
 							// if we've found a plus sign, that means that there's another name/value
 							// pair after it.  We'll store what we've found, advance to the next character,
 							// and set the state to DetermineAttributeType.
-							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 							rawData.SetLength(0);
 							state = ParserState.DetermineAttributeType;
 							rawValueTypes.Add(RDNValueType.StringValue);
@@ -759,7 +761,7 @@ namespace CPI.DirectoryServices
 								// pair after it.  We'll store what we've found, advance to the next character,
 								// and set the state to DetermineAttributeType.
 								position++;
-								rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+								rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 								rawData.SetLength(0);
 								state = ParserState.DetermineAttributeType;
 								rawValueTypes.Add(RDNValueType.StringValue);
@@ -771,7 +773,7 @@ namespace CPI.DirectoryServices
 						}
 						else
 						{
-							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray()));
+							rawValues.Add(Encoding.UTF8.GetString(rawData.ToArray(), 0, (int)rawData.Length));
 							rawData.SetLength(0);
 							rawValueTypes.Add(RDNValueType.StringValue);
 						}

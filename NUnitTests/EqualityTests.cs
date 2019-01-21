@@ -7,18 +7,20 @@
 * (C) 2005 Pete Everett (http://www.CynicalPirate.com)
 *
 *******************************************************************************/
+/******************************************************************************
+ * Modified by: Thomas Würtz to support .NET Standard 2019-01-21
+ ******************************************************************************/
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace CPI.DirectoryServices.Tests
 {
-    [TestFixture, TestClass]
+    [TestFixture]
     public class EqualityTests
     {
-        [Test, TestMethod]
+        [Test]
         public void RDNCount()
         {
             DN dn1 = new DN("");
@@ -34,7 +36,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn3.RDNs.Count, 4);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void RDNComponentCount()
         {
             DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
@@ -46,7 +48,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn2.RDNs[0].Components.Count, 2);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void EqualsMethod()
         {
             DN dn1 = new DN("Cn=PETE,oU=pEoPle,DC=exAMplE,Dc=cOM");
@@ -60,7 +62,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.IsFalse(dn1.Equals(dn3));
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void EqualsOperator()
         {
             DN dn1 = new DN("Cn=PETE,oU=pEoPle,DC=exAMplE,Dc=cOM");
@@ -74,7 +76,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.IsFalse(dn1 == dn3);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void NotEqualsOperator()
         {
             DN dn1 = new DN("Cn=PETE,oU=pEoPle ,   DC=exAMplE,Dc=cOM");
@@ -88,7 +90,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.IsTrue(dn1 != dn3);
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void HashCode()
         {
             DN dn1 = new DN("Cn=PETE,oU=pEoPle,DC=exAMplE,Dc=cOM");
@@ -101,7 +103,7 @@ namespace CPI.DirectoryServices.Tests
 			
             Assert.IsFalse(dn1.GetHashCode() == dn3.GetHashCode());
         }
-        [Test, TestMethod]
+        [Test]
         public void Parent()
         {
             DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");
@@ -109,19 +111,20 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn1.Parent.ToString(), "OU=People,DC=example,DC=com");
         }
 	
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(InvalidOperationException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ParentOfEmptyString()
         {
             DN dn = new DN("CN=Pete,OU=People,DC=example,DC=com");
-			
-            for (int i = 0; i <= 5; i++)
+
+            Assert.Throws<InvalidOperationException>(() =>
             {
-                dn = dn.Parent;
-            }
+                for (int i = 0; i <= 5; i++)
+                {
+                    dn = dn.Parent;
+                }
+            });
         }
-        [Test, TestMethod]
+        [Test]
         public void Contains()
         {
             DN dn1 = new DN("CN=Pete,OU=People,DC=example,DC=com");

@@ -7,6 +7,9 @@
 * (C) 2005 Pete Everett (http://www.CynicalPirate.com)
 *
 *******************************************************************************/
+/******************************************************************************
+ * Modified by: Thomas Würtz to support .NET Standard 2019-01-21
+ ******************************************************************************/
 
 using System;
 using System.Collections;
@@ -219,7 +222,7 @@ namespace CPI.DirectoryServices
 			// Break the DN down into its component RDNs.
 			// Don't check the validity of the RDNs; just find the separators.
 			
-			ArrayList rawRDNs = new ArrayList();
+			List<string> rawRDNs = new List<string>();
 			ParserState state = ParserState.LookingForSeparator;
 			StringBuilder rawRDN = new StringBuilder();
 			

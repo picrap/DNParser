@@ -7,18 +7,20 @@
 * (C) 2005 Pete Everett (http://www.CynicalPirate.com)
 *
 *******************************************************************************/
+/******************************************************************************
+ * Modified by: Thomas Würtz to support .NET Standard 2019-01-21
+ ******************************************************************************/
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace CPI.DirectoryServices.Tests
 {
-    [TestFixture, TestClass]
+    [TestFixture]
     public class EscapingTests
     {
-        [Test, TestMethod]
+        [Test]
         public void SpacesAtBeginningAndEnd()
         {
             DN dn = new DN(@"CN=\     Pete    \ ", EscapeChars.SpecialChars);
@@ -30,7 +32,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn.ToString(), @"CN=     Pete     ");
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void SpecialCharacters()
         {
             DN dn = new DN(@"CN=\#Pound\,Comma\=Equals Sign\+Plus sign\<Less than\>Greater than\;Semicolon\\Backslash\""Quote", EscapeChars.SpecialChars);
@@ -42,7 +44,7 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn.ToString(), @"CN=#Pound,Comma=Equals Sign+Plus sign<Less than>Greater than;Semicolon\Backslash""Quote");
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void HexEscapeNonSpecialCharacter()
         {
             DN dn = new DN(@"CN=Pete\20Everett,OU=People,DC=example,DC=com");
@@ -50,15 +52,16 @@ namespace CPI.DirectoryServices.Tests
             Assert.AreEqual(dn.ToString(), @"CN=Pete Everett,OU=People,DC=example,DC=com");
         }
 		
-        [Test, TestMethod]
-        [NUnit.Framework.ExpectedException(typeof(ArgumentException))]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void UnescapedSpecialCharacter()
         {
-            DN dn = new DN(@"CN=Winkin, Blinkin, and Nod,OU=People,DC=example,DC=com");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                DN dn = new DN(@"CN=Winkin, Blinkin, and Nod,OU=People,DC=example,DC=com");
+            });
         }
 		
-        [Test, TestMethod]
+        [Test]
         public void MultibyteCharacter()
         {
             char MusicalNote  = (char)0x266B;
