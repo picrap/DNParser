@@ -8,7 +8,7 @@
     <Copyright>Written by Pete Everett (ported to Github and NuGet by Pascal Craponne and Thomas Würtz) - CPOL License http://www.codeproject.com/info/cpol10.aspx</Copyright>
     <Version>1.3</Version>
     <PackageId>DNParser</PackageId>
-    <PackageVersion>1.3.0</PackageVersion>
+    <PackageVersion>1.3.1</PackageVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>-</PackageReleaseNotes>
     <PackageLicenseUrl>http://www.codeproject.com/info/cpol10.aspx</PackageLicenseUrl>
